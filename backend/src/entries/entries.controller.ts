@@ -1,11 +1,23 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Request, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { StorageService } from '../storage/storage.service';
 import { EntriesService } from './entries.service';
 import { JwtGuard } from '../auth/jwt.guard';
 
 @Controller('entries')
 @UseGuards(JwtGuard)
 export class EntriesController {
-  constructor(private entries: EntriesService) {}
+  constructor(
+    private entries: EntriesService,
+    private storage: StorageService,
+  ) {}
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadImage(@UploadedFile() file: any) {
+    const url = await this.storage.uploadFile(file, 'memento');
+    return { url };
+  }
 
   @Get()
   getAll(@Request() req) {
