@@ -12,6 +12,11 @@ export class EntriesController {
     return this.entries.getEntries(req.user.sub);
   }
 
+  @Get(':id')
+  getOne(@Request() req, @Param('id') id: string) {
+    return this.entries.getOne(id, req.user.sub);
+  }
+
   @Post()
   create(@Request() req, @Body() body: { text: string; imageUrl?: string }) {
     return this.entries.createEntry(req.user.sub, body.text, body.imageUrl);

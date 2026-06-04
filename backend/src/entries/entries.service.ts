@@ -12,6 +12,12 @@ export class EntriesService {
     });
   }
 
+  async getOne(id: string, userId: string) {
+    return this.prisma.entry.findFirst({
+      where: { id, userId },
+    });
+  }
+
   async createEntry(userId: string, text: string, imageUrl?: string) {
     return this.prisma.entry.create({
       data: { userId, text, imageUrl },
