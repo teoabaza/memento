@@ -53,6 +53,7 @@ import { entriesService } from '../services/api'
 const router = useRouter()
 const text = ref('')
 const selectedImage = ref<string | null>(null)
+const selectedFile = ref<File | null>(null)
 const loading = ref(false)
 const error = ref('')
 
@@ -67,6 +68,7 @@ function pickImage() {
   input.onchange = (e: any) => {
     const file = e.target.files[0]
     if (file) {
+      selectedFile.value = file
       const reader = new FileReader()
       reader.onload = (ev: any) => {
         selectedImage.value = ev.target.result
@@ -81,7 +83,11 @@ async function save() {
   loading.value = true
   error.value = ''
   try {
-    await entriesService.create(text.value, selectedImage.value || undefined)
+    let imageUrl: string | undefined
+    if (selectedFile.value) {
+      imageUrl = await entriesService.uploadImage(selectedFile.value)
+    }
+    await entriesService.create(text.value, imageUrl)
     router.push('/home')
   } catch (e: any) {
     error.value = e.response?.data?.message || 'Something went wrong'

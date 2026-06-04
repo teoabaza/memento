@@ -9,7 +9,7 @@ export class StorageService {
   constructor() {
     this.s3 = new S3Client({
       region: 'garage',
-      endpoint: 'http://garage-aoy2iq5xtj2x2zoqa300cbsl:3900',
+      endpoint: process.env.GARAGE_ENDPOINT!,
       credentials: {
         accessKeyId: process.env.GARAGE_ACCESS_KEY!,
         secretAccessKey: process.env.GARAGE_SECRET_KEY!,
@@ -28,6 +28,6 @@ export class StorageService {
       ContentType: file.mimetype,
     }));
 
-    return `https://s3.teoabaza.com/${bucket}/${key}`;
+    return `${process.env.GARAGE_PUBLIC_URL}/${bucket}/${key}`;
   }
 }

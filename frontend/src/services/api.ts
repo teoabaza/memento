@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'https://api.teoabaza.com/api',
+  baseURL: import.meta.env.VITE_API_URL,
 })
 
 // Automatically attach token to every request
@@ -59,5 +59,14 @@ export const entriesService = {
   async delete(id: string) {
     const res = await api.delete(`/entries/${id}`)
     return res.data
+  },
+
+  async uploadImage(file: File): Promise<string> {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await api.post('/entries/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return res.data.url
   }
 }
