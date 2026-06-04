@@ -45,7 +45,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { onIonViewDidEnter } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
@@ -59,7 +60,7 @@ const router = useRouter()
 const entries = ref<any[]>([])
 const loading = ref(false)
 
-onMounted(async () => {
+onIonViewDidEnter(async () => {
   loading.value = true
   try {
     entries.value = await entriesService.getAll()

@@ -73,6 +73,7 @@ const route = useRoute()
 const entry = ref<any>(null)
 const text = ref('')
 const selectedImage = ref<string | null>(null)
+const selectedFile = ref<File | null>(null)
 const editing = ref(false)
 const loading = ref(false)
 const error = ref('')
@@ -103,6 +104,7 @@ function pickImage() {
   input.onchange = (e: any) => {
     const file = e.target.files[0]
     if (file) {
+      selectedFile.value = file
       const reader = new FileReader()
       reader.onload = (ev: any) => {
         selectedImage.value = ev.target.result
@@ -117,10 +119,14 @@ async function save() {
   loading.value = true
   error.value = ''
   try {
+    let imageUrl = entry.value.imageUrl
+    if (selectedFile.value) {
+      imageUrl = await entriesService.uploadImage(selectedFile.value)
+    }
     await entriesService.update(
       entry.value.id,
       text.value,
-      selectedImage.value || entry.value.imageUrl
+      imageUrl
     )
     editing.value = false
     router.push('/home')
