@@ -17,6 +17,11 @@ $RECYCLE.BIN/
 log.txt
 npm-debug.log*
 
+# dotenv environment variable files
+.env
+.env.local
+.env.*.local
+
 /.idea
 /.ionic
 /.sass-cache
