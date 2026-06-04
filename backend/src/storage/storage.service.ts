@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class StorageService {
@@ -15,6 +15,11 @@ export class StorageService {
       },
       forcePathStyle: true,
     });
+  }
+
+  async getFile(bucket: string, key: string) {
+    const command = new GetObjectCommand({ Bucket: bucket, Key: key })
+    return this.s3.send(command)
   }
 
   async uploadFile(file: any, bucket: string): Promise<string> {
