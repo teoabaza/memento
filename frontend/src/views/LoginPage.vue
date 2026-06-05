@@ -150,4 +150,8 @@ ion-input {
   --color: #2C1810;
   --placeholder-color: #C8B8AC;
 }
+ion-content {
+  --background: #FDF8F3;
+  color-scheme: light;
+}
 </style>
