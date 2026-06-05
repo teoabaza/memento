@@ -98,31 +98,73 @@ async function save() {
 </script>
 
 <style scoped>
+ion-toolbar {
+  --background: #FDF8F3;
+  --border-color: #EDE5DC;
+}
+ion-title {
+  color: #2C1810;
+  font-weight: 500;
+  font-size: 16px;
+}
+ion-back-button {
+  --color: #C4956A;
+}
+ion-button {
+  --color: #C4956A;
+  font-weight: 500;
+}
+ion-content {
+  --background: #FDF8F3;
+}
 .today {
-  color: #888;
-  font-size: 0.85rem;
+  font-size: 11px;
+  color: #A08070;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   margin-bottom: 16px;
+  font-weight: 500;
 }
 .entry-textarea {
-  font-size: 1.1rem;
-  min-height: 120px;
-  --padding-start: 0;
+  --background: white;
+  --border-radius: 16px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  border: 0.5px solid #EDE5DC;
+  border-radius: 16px;
+  font-size: 16px;
+  color: #2C1810;
+  line-height: 1.6;
+  min-height: 140px;
 }
 .image-section {
-  margin-top: 24px;
+  margin-top: 16px;
+}
+ion-button[fill="outline"] {
+  --color: #C4956A;
+  --border-color: #C4956A;
+  --border-style: dashed;
+  --border-radius: 14px;
+  --border-width: 0.5px;
 }
 .image-preview {
-  margin-top: 16px;
-  border-radius: 12px;
+  margin-top: 14px;
+  border-radius: 16px;
   overflow: hidden;
 }
 .image-preview img {
   width: 100%;
-  max-height: 300px;
+  max-height: 260px;
   object-fit: cover;
 }
 .error {
-  color: red;
+  color: #E24B4A;
   margin-top: 12px;
+  font-size: 14px;
+}
+ion-buttons ion-button {
+  --color: #A08070 !important;
 }
 </style>

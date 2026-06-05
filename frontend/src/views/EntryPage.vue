@@ -18,8 +18,8 @@
     </ion-header>
 
     <ion-content class="ion-padding">
-    <div v-if="loading" style="text-align: center; margin-top: 40px;">
-      <ion-spinner />
+    <div v-if="loading" class="loading-state" style="text-align: center; margin-top: 40px;">
+      <ion-spinner color="medium" />
     </div>
 
     <div v-else-if="entry">
@@ -41,15 +41,12 @@
         <img :src="selectedImage || entry.imageUrl" />
       </div>
 
-      <ion-button
-        fill="clear"
-        color="danger"
-        expand="block"
-        class="ion-margin-top"
-        @click="confirmDelete"
-      >
-        Delete Entry
-      </ion-button>
+      <div class="delete-section">
+        <button class="delete-btn" @click="confirmDelete">
+          <ion-icon :icon="trashOutline" />
+          Delete Entry
+        </button>
+      </div>
 
       <p class="error" v-if="error">{{ error }}</p>
     </div>
@@ -65,8 +62,8 @@ import {
   IonButtons, IonButton, IonBackButton, IonTextarea,
   IonIcon, IonSpinner, alertController
 } from '@ionic/vue'
-import { image } from 'ionicons/icons'
 import { entriesService } from '../services/api'
+import { image, trashOutline } from 'ionicons/icons'
 
 const router = useRouter()
 const route = useRoute()
@@ -158,26 +155,95 @@ async function confirmDelete() {
 </script>
 
 <style scoped>
+ion-toolbar {
+  --background: #FDF8F3;
+  --border-color: #EDE5DC;
+}
+ion-title {
+  color: #2C1810;
+  font-weight: 500;
+  font-size: 13px;
+}
+ion-back-button {
+  --color: #C4956A;
+}
+ion-button {
+  --color: #C4956A;
+  font-weight: 500;
+}
+ion-content {
+  --background: #FDF8F3;
+}
 .entry-textarea {
-  font-size: 1.1rem;
+  --background: white;
+  --border-radius: 16px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  border: 0.5px solid #EDE5DC;
+  border-radius: 16px;
+  font-size: 17px;
+  color: #2C1810;
+  line-height: 1.7;
   min-height: 120px;
-  --padding-start: 0;
 }
 .image-section {
-  margin-top: 24px;
+  margin-top: 16px;
+}
+ion-button[fill="outline"] {
+  --color: #C4956A;
+  --border-color: #C4956A;
+  --border-style: dashed;
+  --border-radius: 14px;
+  --border-width: 0.5px;
 }
 .image-preview {
   margin-top: 16px;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
 }
 .image-preview img {
   width: 100%;
-  max-height: 300px;
+  max-height: 260px;
   object-fit: cover;
 }
+ion-button[fill="clear"][color="danger"] {
+  --color: #C89090;
+  margin-top: 8px;
+  font-size: 14px;
+}
 .error {
-  color: red;
+  color: #E24B4A;
   margin-top: 12px;
+  font-size: 14px;
+}
+.delete-section {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 0.5px solid #EDE5DC;
+}
+.delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  border: 0.5px solid #E8C8C8;
+  border-radius: 14px;
+  font-size: 14px;
+  color: #C89090;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+.loading-state {
+  text-align: center;
+  margin-top: 60px;
+  color: #A08070;
+}
+ion-buttons ion-button {
+  --color: #A08070 !important;
 }
 </style>

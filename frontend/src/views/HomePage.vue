@@ -16,10 +16,9 @@
         </ion-fab-button>
       </ion-fab>
 
-      <div class="ion-padding" v-if="entries.length === 0 && !loading">
-        <p style="text-align: center; color: #888; margin-top: 40px;">
-          No entries yet. Tap + to write your first line!
-        </p>
+      <div v-if="entries.length === 0 && !loading" class="empty-state">
+        <p>No entries yet.</p>
+        <p>Tap + to write your first line!</p>
       </div>
 
       <ion-list v-else>
@@ -39,7 +38,9 @@
         </ion-item>
       </ion-list>
 
-      <ion-loading :is-open="loading" message="Loading..." />
+      <div v-if="loading" class="loading-state">
+        <ion-spinner color="medium" />
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -51,7 +52,7 @@ import { useRouter } from 'vue-router'
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
   IonList, IonItem, IonLabel, IonFab, IonFabButton, IonIcon,
-  IonButtons, IonButton, IonThumbnail, IonLoading
+  IonButtons, IonButton, IonThumbnail, IonSpinner
 } from '@ionic/vue'
 import { add } from 'ionicons/icons'
 import { entriesService, authService } from '../services/api'
@@ -82,15 +83,80 @@ function logout() {
 </script>
 
 <style scoped>
+ion-toolbar {
+  --background: #FDF8F3;
+  --border-color: #EDE5DC;
+}
+ion-title {
+  color: #2C1810;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+ion-button {
+  --color: #A08070;
+  font-size: 13px;
+}
+ion-content {
+  --background: #FDF8F3;
+}
+ion-list {
+  background: transparent !important;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+ion-item {
+  --background: white;
+  --border-radius: 16px;
+  --border-color: transparent;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  --inner-border-width: 0;
+  border-radius: 16px;
+  border: 0.5px solid #EDE5DC;
+  margin-bottom: 0;
+}
 .entry-date {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: 11px;
+  color: #A08070;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
 }
 .entry-text {
-  font-size: 1rem;
+  font-size: 15px;
+  color: #2C1810;
   margin-top: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+ion-thumbnail {
+  --size: 48px;
+  --border-radius: 10px;
+}
+ion-fab-button {
+  --background: #C4956A;
+  --background-activated: #B8845A;
+  --border-radius: 16px;
+  --box-shadow: 0 4px 12px rgba(196, 149, 106, 0.35);
+}
+.empty-state {
+  text-align: center;
+  color: #A08070;
+  margin-top: 80px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.loading-state {
+  text-align: center;
+  margin-top: 60px;
+  color: #A08070;
+}
+ion-buttons ion-button {
+  --color: #A08070 !important;
 }
 </style>

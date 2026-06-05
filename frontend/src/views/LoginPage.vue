@@ -3,8 +3,9 @@
     <ion-content class="ion-padding login-content">
       <div class="login-container">
         <div class="login-header">
+          <div class="logo-circle">💭</div>
           <h1>Memento</h1>
-          <p>One line a day</p>
+          <p>one line a day</p>
         </div>
 
         <ion-segment v-model="mode" class="ion-margin-bottom">
@@ -68,29 +69,85 @@ async function submit() {
 
 <style scoped>
 .login-content {
-  --background: #f8f8f8;
+  --background: #FDF8F3;
 }
 .login-container {
   max-width: 400px;
   margin: 0 auto;
-  padding-top: 80px;
+  padding-top: 60px;
+  padding-bottom: 40px;
 }
 .login-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 36px;
+}
+.logo-circle {
+  width: 64px;
+  height: 64px;
+  background: #F5E6D3;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 16px;
 }
 .login-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 500;
+  color: #2C1810;
+  letter-spacing: -0.5px;
   margin: 0;
 }
 .login-header p {
-  color: #888;
+  color: #A08070;
+  margin-top: 4px;
+  font-size: 14px;
+}
+ion-segment {
+  --background: #F0E8DF;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+ion-segment-button {
+  --color: #A08070;
+  --color-checked: #2C1810;
+  --indicator-color: white;
+  --border-radius: 10px;
+  font-size: 14px;
+}
+ion-item {
+  --background: white;
+  --border-radius: 12px;
+  --border-color: #E8DDD5;
+  --padding-start: 14px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  border: 0.5px solid #E8DDD5;
+}
+ion-label {
+  color: #A08070 !important;
+  font-size: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+ion-button {
+  --background: #C4956A;
+  --background-hover: #B8845A;
+  --border-radius: 14px;
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  font-size: 16px;
   margin-top: 8px;
 }
 .error {
-  color: red;
+  color: #E24B4A;
   text-align: center;
   margin-top: 12px;
+  font-size: 14px;
+}
+ion-input {
+  --color: #2C1810;
+  --placeholder-color: #C8B8AC;
 }
 </style>
