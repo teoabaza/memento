@@ -46,13 +46,13 @@ export const entriesService = {
     return res.data
   },
 
-  async create(text: string, imageUrl?: string) {
-    const res = await api.post('/entries', { text, imageUrl })
+  async create(text: string, imageUrls: string[] = []) {
+    const res = await api.post('/entries', { text, imageUrls })
     return res.data
   },
 
-  async update(id: string, text: string, imageUrl?: string) {
-    const res = await api.put(`/entries/${id}`, { text, imageUrl })
+  async update(id: string, text: string, imageUrls: string[] = []) {
+    const res = await api.put(`/entries/${id}`, { text, imageUrls })
     return res.data
   },
 
@@ -68,5 +68,32 @@ export const entriesService = {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     return res.data.url
+  }
+}
+
+export const notesService = {
+  async getAll() {
+    const res = await api.get('/notes')
+    return res.data
+  },
+
+  async getOne(id: string) {
+    const res = await api.get(`/notes/${id}`)
+    return res.data
+  },
+
+  async create(title: string, content: string) {
+    const res = await api.post('/notes', { title, content })
+    return res.data
+  },
+
+  async update(id: string, title: string, content: string) {
+    const res = await api.put(`/notes/${id}`, { title, content })
+    return res.data
+  },
+
+  async delete(id: string) {
+    const res = await api.delete(`/notes/${id}`)
+    return res.data
   }
 }

@@ -1,2 +1,57 @@
-/* For information on how to create your own theme, please refer to:
-http://ionicframework.com/docs/theming/ */
+/* Memento — dark forest green + gold theme */
+
+:root {
+  /* Brand palette */
+  --m-green-deep:    #162E24;
+  --m-green-surface: #1C3B2D;
+  --m-green-card:    #1F4232;
+  --m-green-border:  #2A4A3A;
+  --m-gold:          #C9A55A;
+  --m-gold-light:    #D8B870;
+  --m-gold-dim:      #8C6E35;
+  --m-text:          #F0EAD6;
+  --m-text-muted:    #7BA190;
+  --m-danger:        #E05C5C;
+  --m-danger-border: #5A2828;
+
+  /* Ionic overrides */
+  --ion-background-color:     var(--m-green-deep);
+  --ion-background-color-rgb: 22, 46, 36;
+
+  --ion-text-color:     var(--m-text);
+  --ion-text-color-rgb: 240, 234, 214;
+
+  --ion-color-primary:          var(--m-gold);
+  --ion-color-primary-rgb:      201, 165, 90;
+  --ion-color-primary-contrast: var(--m-green-deep);
+  --ion-color-primary-shade:    #B8945A;
+  --ion-color-primary-tint:     var(--m-gold-light);
+
+  --ion-color-medium:          var(--m-text-muted);
+  --ion-color-medium-rgb:      123, 161, 144;
+  --ion-color-medium-contrast: var(--m-green-deep);
+  --ion-color-medium-shade:    #6A9080;
+  --ion-color-medium-tint:     #8BAFA0;
+
+  --ion-color-danger:          var(--m-danger);
+  --ion-color-danger-contrast: #fff;
+
+  --ion-toolbar-background:   var(--m-green-surface);
+  --ion-toolbar-border-color: var(--m-green-border);
+  --ion-toolbar-color:        var(--m-text);
+
+  --ion-tab-bar-background:   var(--m-green-surface);
+  --ion-tab-bar-border-color: var(--m-green-border);
+  --ion-tab-bar-color:        var(--m-text-muted);
+  --ion-tab-bar-color-selected: var(--m-gold);
+
+  --ion-item-background:      var(--m-green-card);
+  --ion-item-border-color:    var(--m-green-border);
+  --ion-item-color:           var(--m-text);
+
+  --ion-card-background:      var(--m-green-card);
+
+  --ion-placeholder-color:    var(--m-text-muted);
+
+  color-scheme: dark;
+}

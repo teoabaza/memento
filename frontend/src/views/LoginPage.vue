@@ -1,30 +1,57 @@
 <template>
   <ion-page>
-    <ion-content class="ion-padding login-content">
+    <ion-content class="login-content">
       <div class="login-container">
+
         <div class="login-header">
-          <div class="logo-circle">💭</div>
+          <!-- Pen-nib logo matching the new brand mark -->
+          <div class="logo-wrap">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="logo-svg">
+              <rect width="100" height="100" rx="24" fill="#1C3B2D"/>
+              <!-- Pen barrel -->
+              <rect x="43" y="10" width="14" height="20" rx="4"
+                    fill="none" stroke="#C9A55A" stroke-width="2.5"/>
+              <!-- Clip / cap line -->
+              <line x1="50" y1="10" x2="50" y2="30"
+                    stroke="#C9A55A" stroke-width="1.5" stroke-dasharray="2 2"/>
+              <!-- Nib body -->
+              <path d="M37 30 L50 72 L63 30 Z"
+                    fill="none" stroke="#C9A55A" stroke-width="2.5" stroke-linejoin="round"/>
+              <!-- Nib centre line -->
+              <line x1="50" y1="30" x2="50" y2="72"
+                    stroke="#C9A55A" stroke-width="1.2" stroke-dasharray="0"/>
+              <!-- Ink hole -->
+              <circle cx="50" cy="58" r="3.5"
+                      fill="none" stroke="#C9A55A" stroke-width="2"/>
+              <!-- Signature stroke -->
+              <path d="M32 84 Q41 79 50 82 Q59 85 68 80"
+                    fill="none" stroke="#C9A55A" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
           <h1>Memento</h1>
           <p>one line a day</p>
         </div>
 
-        <ion-segment v-model="mode" class="ion-margin-bottom">
+        <ion-segment v-model="mode" class="mode-segment">
           <ion-segment-button value="login">Login</ion-segment-button>
           <ion-segment-button value="register">Register</ion-segment-button>
         </ion-segment>
 
-        <ion-item>
-          <ion-label position="floating">Email</ion-label>
-          <ion-input v-model="email" type="email" />
-        </ion-item>
+        <div class="form-fields">
+          <ion-item class="field-item">
+            <ion-label position="floating">Email</ion-label>
+            <ion-input v-model="email" type="email" autocomplete="email" />
+          </ion-item>
 
-        <ion-item class="ion-margin-bottom">
-          <ion-label position="floating">Password</ion-label>
-          <ion-input v-model="password" type="password" />
-        </ion-item>
+          <ion-item class="field-item">
+            <ion-label position="floating">Password</ion-label>
+            <ion-input v-model="password" type="password" autocomplete="current-password" />
+          </ion-item>
+        </div>
 
-        <ion-button expand="block" @click="submit" :disabled="loading">
-          {{ loading ? 'Please wait...' : mode === 'login' ? 'Login' : 'Register' }}
+        <ion-button expand="block" class="submit-btn" @click="submit" :disabled="loading">
+          {{ loading ? 'Please wait…' : mode === 'login' ? 'Login' : 'Create account' }}
         </ion-button>
 
         <p class="error" v-if="error">{{ error }}</p>
@@ -69,89 +96,97 @@ async function submit() {
 
 <style scoped>
 .login-content {
-  --background: #FDF8F3;
+  --background: #162E24;
 }
 .login-container {
   max-width: 400px;
   margin: 0 auto;
-  padding-top: 60px;
-  padding-bottom: 40px;
+  padding: 60px 24px 40px;
 }
 .login-header {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: 40px;
 }
-.logo-circle {
-  width: 64px;
-  height: 64px;
-  background: #F5E6D3;
-  border-radius: 20px;
+.logo-wrap {
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 28px;
-  margin: 0 auto 16px;
+  margin-bottom: 20px;
+}
+.logo-svg {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  filter: drop-shadow(0 4px 16px rgba(201, 165, 90, 0.25));
 }
 .login-header h1 {
-  font-size: 26px;
-  font-weight: 500;
-  color: #2C1810;
+  font-size: 28px;
+  font-weight: 600;
+  color: #F0EAD6;
   letter-spacing: -0.5px;
   margin: 0;
 }
 .login-header p {
-  color: #A08070;
+  color: #7BA190;
   margin-top: 4px;
   font-size: 14px;
-}
-ion-segment {
-  --background: #F0E8DF;
-  border-radius: 12px;
-  margin-bottom: 24px;
-}
-ion-segment-button {
-  --color: #A08070;
-  --color-checked: #2C1810;
-  --indicator-color: white;
-  --border-radius: 10px;
-  font-size: 14px;
-}
-ion-item {
-  --background: white;
-  --border-radius: 12px;
-  --border-color: #E8DDD5;
-  --padding-start: 14px;
-  margin-bottom: 14px;
-  border-radius: 12px;
-  border: 0.5px solid #E8DDD5;
-}
-ion-label {
-  color: #A08070 !important;
-  font-size: 12px !important;
-  text-transform: uppercase;
   letter-spacing: 0.3px;
 }
-ion-button {
-  --background: #C4956A;
-  --background-hover: #B8845A;
-  --border-radius: 14px;
-  --padding-top: 14px;
-  --padding-bottom: 14px;
-  font-size: 16px;
-  margin-top: 8px;
+.mode-segment {
+  --background: #1C3B2D;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  border: 0.5px solid #2A4A3A;
 }
-.error {
-  color: #E24B4A;
-  text-align: center;
-  margin-top: 12px;
+ion-segment-button {
+  --color: #7BA190;
+  --color-checked: #F0EAD6;
+  --indicator-color: #C9A55A;
+  --border-radius: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
   font-size: 14px;
+  font-weight: 500;
+}
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.field-item {
+  --background: #1C3B2D;
+  --border-radius: 14px;
+  --border-color: #2A4A3A;
+  --padding-start: 16px;
+  --color: #F0EAD6;
+  border-radius: 14px;
+  border: 0.5px solid #2A4A3A;
+}
+ion-label {
+  color: #7BA190 !important;
+  font-size: 11px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 ion-input {
-  --color: #2C1810;
-  --placeholder-color: #C8B8AC;
+  --color: #F0EAD6;
+  --placeholder-color: #4A6A5A;
 }
-ion-content {
-  --background: #FDF8F3;
-  color-scheme: light;
+.submit-btn {
+  --background: #C9A55A;
+  --background-hover: #D8B870;
+  --color: #162E24;
+  --border-radius: 14px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.error {
+  color: #E05C5C;
+  text-align: center;
+  margin-top: 14px;
+  font-size: 14px;
 }
 </style>

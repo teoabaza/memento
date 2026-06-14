@@ -18,16 +18,16 @@ export class EntriesService {
     });
   }
 
-  async createEntry(userId: string, text: string, imageUrl?: string) {
+  async createEntry(userId: string, text: string, imageUrls: string[] = []) {
     return this.prisma.entry.create({
-      data: { userId, text, imageUrl },
+      data: { userId, text, imageUrls },
     });
   }
 
-  async updateEntry(id: string, userId: string, text: string, imageUrl?: string) {
+  async updateEntry(id: string, userId: string, text: string, imageUrls: string[] = []) {
     return this.prisma.entry.update({
       where: { id, userId },
-      data: { text, imageUrl },
+      data: { text, imageUrls },
     });
   }
 

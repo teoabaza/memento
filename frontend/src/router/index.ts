@@ -29,6 +29,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Entry',
     component: () => import('../views/EntryPage.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/note/:id',
+    name: 'Note',
+    component: () => import('../views/NoteDetailPage.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
