@@ -24,10 +24,10 @@ export class EntriesService {
     });
   }
 
-  async updateEntry(id: string, userId: string, text: string, imageUrls: string[] = []) {
+  async updateEntry(id: string, userId: string, text: string, imageUrls: string[] = [], date?: string) {
     return this.prisma.entry.update({
       where: { id, userId },
-      data: { text, imageUrls },
+      data: { text, imageUrls, ...(date ? { date: new Date(date) } : {}) },
     });
   }
 

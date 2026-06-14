@@ -35,8 +35,8 @@ export class EntriesController {
   }
 
   @Put(':id')
-  update(@Request() req, @Param('id') id: string, @Body() body: { text: string; imageUrls?: string[] }) {
-    return this.entries.updateEntry(id, req.user.sub, body.text, body.imageUrls ?? []);
+  update(@Request() req, @Param('id') id: string, @Body() body: { text: string; imageUrls?: string[]; date?: string }) {
+    return this.entries.updateEntry(id, req.user.sub, body.text, body.imageUrls ?? [], body.date);
   }
 
   @Delete(':id')
