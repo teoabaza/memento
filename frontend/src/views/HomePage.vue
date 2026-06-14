@@ -1,143 +1,230 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>
-          <span class="app-title">
-            <svg viewBox="0 0 28 28" class="title-logo" xmlns="http://www.w3.org/2000/svg">
-              <rect width="28" height="28" rx="7" fill="#1C3B2D"/>
-              <path d="M10 8.5 L14 20.5 L18 8.5 Z" fill="none" stroke="#C9A55A" stroke-width="1.4" stroke-linejoin="round"/>
-              <rect x="11.5" y="3.5" width="5" height="5.5" rx="1.5" fill="none" stroke="#C9A55A" stroke-width="1.4"/>
-              <circle cx="14" cy="16" r="1.2" fill="none" stroke="#C9A55A" stroke-width="1.2"/>
-              <path d="M9 24 Q11.5 22 14 23 Q16.5 24 19 22.5" fill="none" stroke="#C9A55A" stroke-width="1.4" stroke-linecap="round"/>
-            </svg>
+    <ion-header :translucent="false">
+      <ion-toolbar class="nav-toolbar">
+        <ion-buttons slot="start">
+          <span class="brand">
+            <img src="/logo-dark.png" alt="" class="brand-logo" />
             Memento
           </span>
-        </ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="logout" class="logout-btn">Logout</ion-button>
         </ion-buttons>
-      </ion-toolbar>
-
-      <!-- Tab segment -->
-      <ion-toolbar class="tab-toolbar">
-        <ion-segment v-model="activeTab" class="tab-segment">
-          <ion-segment-button value="diary">
-            <ion-label>Diary</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="notes">
-            <ion-label>Notes</ion-label>
-          </ion-segment-button>
-        </ion-segment>
+        <ion-buttons slot="end">
+          <ion-button @click="logout" class="logout-btn">Sign out</ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
-      <!-- FAB changes based on tab -->
-      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button @click="fabAction">
-          <ion-icon :icon="add" />
-        </ion-fab-button>
-      </ion-fab>
+      <!-- Pill tab switcher -->
+      <div class="tab-pills">
+        <button class="tab-pill" :class="{ active: activeTab === 'diary' }" @click="activeTab = 'diary'">Diary</button>
+        <button class="tab-pill" :class="{ active: activeTab === 'notes' }" @click="activeTab = 'notes'">Notes</button>
+      </div>
 
-      <!-- DIARY TAB -->
+      <!-- Floating action buttons -->
+      <div class="fabs" slot="fixed">
+        <button
+          v-if="activeTab === 'diary' && entries.length > 0"
+          class="fab-btn fab-secondary"
+          @click="diaryView = diaryView === 'list' ? 'calendar' : 'list'"
+        >
+          <ion-icon :icon="diaryView === 'list' ? calendarOutline : listOutline" />
+        </button>
+        <button class="fab-btn fab-primary" @click="fabAction">
+          <ion-icon :icon="add" />
+        </button>
+      </div>
+
+      <!-- DIARY -->
       <template v-if="activeTab === 'diary'">
         <div v-if="diaryLoading" class="loading-state">
-          <ion-spinner color="medium" />
+          <ion-spinner />
         </div>
         <div v-else-if="entries.length === 0" class="empty-state">
-          <div class="empty-icon">✦</div>
+          <img src="/logo.png" alt="" class="empty-logo" />
           <p class="empty-title">No entries yet</p>
           <p class="empty-sub">Tap + to write your first line</p>
         </div>
-        <ion-list v-else>
-          <ion-item
-            v-for="entry in entries"
-            :key="entry.id"
-            button
-            @click="router.push({ name: 'Entry', params: { id: entry.id } })"
-          >
-            <ion-label>
-              <p class="entry-date">{{ formatDate(entry.date) }}</p>
-              <h3 class="entry-text">{{ entry.text }}</h3>
-            </ion-label>
-            <div class="thumb-stack" slot="end" v-if="entry.imageUrls?.length">
-              <img
-                v-for="(url, i) in entry.imageUrls.slice(0, 3)"
-                :key="i"
-                :src="url"
-                class="thumb"
-                :style="{ zIndex: 3 - i, transform: `translateX(${i * -10}px)` }"
-              />
-              <span v-if="entry.imageUrls.length > 3" class="thumb-extra">
-                +{{ entry.imageUrls.length - 3 }}
-              </span>
+        <template v-else>
+          <!-- List view -->
+          <div v-if="diaryView === 'list'" class="list-wrap">
+            <div
+              v-for="entry in entries"
+              :key="entry.id"
+              class="card"
+              @click="router.push({ name: 'Entry', params: { id: entry.id } })"
+            >
+              <div class="card-main">
+                <p class="card-date">{{ formatDate(entry.date) }}</p>
+                <p class="card-text">{{ entry.text }}</p>
+              </div>
+              <div class="card-thumbs" v-if="entry.imageUrls?.length">
+                <img
+                  v-for="(url, i) in entry.imageUrls.slice(0, 3)"
+                  :key="i" :src="url"
+                  class="card-thumb"
+                  :style="{ zIndex: 3 - i, marginLeft: i > 0 ? '-10px' : '0' }"
+                />
+                <span v-if="entry.imageUrls.length > 3" class="thumb-more">+{{ entry.imageUrls.length - 3 }}</span>
+              </div>
             </div>
-          </ion-item>
-        </ion-list>
+          </div>
+
+          <!-- Calendar view -->
+          <div v-else class="calendar-wrap">
+            <div class="cal-card">
+              <!-- Month nav -->
+              <div class="cal-header">
+                <button class="cal-nav" @click="prevMonth">‹</button>
+                <span class="cal-month-label">{{ calMonthLabel }}</span>
+                <button class="cal-nav" @click="nextMonth">›</button>
+              </div>
+
+              <!-- Day-of-week headers -->
+              <div class="cal-grid">
+                <div class="cal-dow" v-for="d in ['M','T','W','T','F','S','S']" :key="d">{{ d }}</div>
+
+                <!-- Empty offset cells -->
+                <div v-for="n in firstDayOffset" :key="'o' + n" class="cal-cell cal-empty" />
+
+                <!-- Day cells -->
+                <div
+                  v-for="day in daysInMonth"
+                  :key="day"
+                  class="cal-cell"
+                  :class="{
+                    'has-entry': getEntriesForDay(day).length > 0,
+                    'is-today': isToday(day)
+                  }"
+                  @click="handleDayClick(day)"
+                >
+                  <span class="cal-num">{{ day }}</span>
+                  <div class="cal-dots" v-if="getEntriesForDay(day).length > 0">
+                    <span
+                      v-for="(_, i) in getEntriesForDay(day).slice(0, 3)"
+                      :key="i"
+                      class="cal-dot"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
       </template>
 
-      <!-- NOTES TAB -->
+      <!-- NOTES -->
       <template v-else>
         <div v-if="notesLoading" class="loading-state">
-          <ion-spinner color="medium" />
+          <ion-spinner />
         </div>
         <div v-else-if="notes.length === 0" class="empty-state">
-          <div class="empty-icon">✦</div>
+          <img src="/logo.png" alt="" class="empty-logo" />
           <p class="empty-title">No notes yet</p>
           <p class="empty-sub">Tap + to create your first note</p>
         </div>
-        <ion-list v-else>
-          <ion-item
+        <div v-else class="list-wrap">
+          <div
             v-for="note in notes"
             :key="note.id"
-            button
+            class="card"
             @click="router.push({ name: 'Note', params: { id: note.id } })"
           >
-            <ion-label>
-              <h3 class="note-title">{{ note.title || 'Untitled' }}</h3>
+            <div class="card-main">
+              <p class="note-title">{{ note.title || 'Untitled' }}</p>
               <p class="note-preview">{{ note.content }}</p>
-            </ion-label>
-            <p class="note-date" slot="end">{{ formatShortDate(note.updatedAt) }}</p>
-          </ion-item>
-        </ion-list>
+            </div>
+            <p class="note-date">{{ formatShortDate(note.updatedAt) }}</p>
+          </div>
+        </div>
       </template>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { onIonViewDidEnter } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
-  IonList, IonItem, IonLabel, IonFab, IonFabButton, IonIcon,
-  IonButtons, IonButton, IonSpinner, IonSegment, IonSegmentButton
+  IonPage, IonHeader, IonToolbar, IonContent,
+  IonIcon, IonButtons, IonButton, IonSpinner
 } from '@ionic/vue'
-import { add } from 'ionicons/icons'
+import { add, listOutline, calendarOutline } from 'ionicons/icons'
 import { entriesService, notesService, authService } from '../services/api'
 
 const router = useRouter()
 const activeTab = ref<'diary' | 'notes'>('diary')
+const diaryView = ref<'list' | 'calendar'>('list')
 
 const entries = ref<any[]>([])
 const diaryLoading = ref(false)
-
 const notes = ref<any[]>([])
 const notesLoading = ref(false)
 
-onIonViewDidEnter(async () => {
-  loadDiary()
-  loadNotes()
+// Calendar state
+const calDate = ref(new Date())
+
+const calMonthLabel = computed(() =>
+  calDate.value.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+)
+
+const daysInMonth = computed(() =>
+  new Date(calDate.value.getFullYear(), calDate.value.getMonth() + 1, 0).getDate()
+)
+
+const firstDayOffset = computed(() => {
+  const first = new Date(calDate.value.getFullYear(), calDate.value.getMonth(), 1).getDay()
+  return (first + 6) % 7 // Monday = 0
 })
+
+const entriesByDate = computed(() => {
+  const map = new Map<string, any[]>()
+  for (const entry of entries.value) {
+    const key = new Date(entry.date).toISOString().slice(0, 10)
+    if (!map.has(key)) map.set(key, [])
+    map.get(key)!.push(entry)
+  }
+  return map
+})
+
+function dayKey(day: number) {
+  const y = calDate.value.getFullYear()
+  const m = String(calDate.value.getMonth() + 1).padStart(2, '0')
+  const d = String(day).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+function getEntriesForDay(day: number) {
+  return entriesByDate.value.get(dayKey(day)) ?? []
+}
+
+function isToday(day: number) {
+  const t = new Date()
+  const c = calDate.value
+  return t.getFullYear() === c.getFullYear() && t.getMonth() === c.getMonth() && t.getDate() === day
+}
+
+function prevMonth() {
+  calDate.value = new Date(calDate.value.getFullYear(), calDate.value.getMonth() - 1, 1)
+}
+function nextMonth() {
+  calDate.value = new Date(calDate.value.getFullYear(), calDate.value.getMonth() + 1, 1)
+}
+
+function handleDayClick(day: number) {
+  const dayEntries = getEntriesForDay(day)
+  if (!dayEntries.length) return
+  router.push({ name: 'Entry', params: { id: dayEntries[0].id } })
+}
+
+onIonViewDidEnter(() => { loadDiary(); loadNotes() })
 
 async function loadDiary() {
   diaryLoading.value = true
   try { entries.value = await entriesService.getAll() }
   finally { diaryLoading.value = false }
 }
-
 async function loadNotes() {
   notesLoading.value = true
   try { notes.value = await notesService.getAll() }
@@ -145,25 +232,16 @@ async function loadNotes() {
 }
 
 function fabAction() {
-  if (activeTab.value === 'diary') {
-    router.push('/entry/new')
-  } else {
-    router.push('/note/new')
-  }
+  router.push(activeTab.value === 'diary' ? '/entry/new' : '/note/new')
 }
-
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString('en-GB', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   })
 }
-
 function formatShortDate(date: string) {
-  return new Date(date).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'short'
-  })
+  return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
 }
-
 function logout() {
   authService.logout()
   router.push('/login')
@@ -171,164 +249,187 @@ function logout() {
 </script>
 
 <style scoped>
-ion-toolbar {
-  --background: #1C3B2D;
-  --border-color: #2A4A3A;
+.nav-toolbar {
+  --background: #152742;
+  --border-color: transparent;
+  --color: #FFFFFF;
+  --padding-start: 10px;
+  --padding-end: 10px;
 }
-.app-title {
+.brand {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #F0EAD6;
-  font-weight: 600;
-  font-size: 17px;
+  gap: 4px;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  font-family: Georgia, serif;
 }
-.title-logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
+.brand-logo { width: 40px; height: 40px; object-fit: contain; border-radius: 50%; opacity: 0.9; }
+.logout-btn { --color: #f7f1e8; font-size: 12px; font-weight: 400; letter-spacing: 0.3px; text-transform: none; }
+.logout-btn::part(native) { color: #f7f1e8; }
+
+/* Tabs */
+.tab-pills { display: flex; gap: 8px; padding: 16px 16px 4px; }
+.tab-pill {
+  flex: 1; padding: 10px 0; border-radius: 12px; border: none;
+  font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit;
+  transition: background 0.18s, color 0.18s;
+  background: rgba(37,51,80,0.08); color: #7A8699;
 }
-.logout-btn {
-  --color: #7BA190;
-  font-size: 13px;
-}
-.tab-toolbar {
-  --background: #1C3B2D;
-  --border-color: #2A4A3A;
-  --min-height: 44px;
-}
-.tab-segment {
-  --background: transparent;
-  margin: 0 16px 4px;
-  border-bottom: 1px solid #2A4A3A;
-}
-ion-segment-button {
-  --color: #7BA190;
-  --color-checked: #C9A55A;
-  --indicator-color: #C9A55A;
-  --indicator-height: 2px;
-  --border-radius: 0;
-  --padding-bottom: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: none;
-  letter-spacing: 0;
-}
-ion-content {
-  --background: #162E24;
-}
-ion-list {
-  background: transparent !important;
-  padding: 12px 16px;
+.tab-pill.active { background: #253350; color: #FFFFFF; }
+
+ion-content { --background: #f7f1e8; }
+
+/* Floating action buttons */
+.fabs {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+  z-index: 999;
 }
-ion-item {
-  --background: #1C3B2D;
-  --border-radius: 16px;
-  --border-color: transparent;
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --padding-top: 14px;
-  --padding-bottom: 14px;
-  --inner-border-width: 0;
-  --color: #F0EAD6;
-  border-radius: 16px;
-  border: 0.5px solid #2A4A3A;
-  margin-bottom: 0;
-}
-.entry-date {
-  font-size: 10px;
-  color: #7BA190;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 5px;
-}
-.entry-text {
-  font-size: 15px;
-  color: #F0EAD6;
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 400;
-}
-/* Stacked image thumbnails */
-.thumb-stack {
+.fab-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  flex-shrink: 0;
-  padding-right: 4px;
+  justify-content: center;
 }
-.thumb {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  object-fit: cover;
-  border: 1.5px solid #162E24;
-  position: relative;
+.fab-secondary {
+  background: #FFFFFF;
+  color: #253350;
+  box-shadow: 0 2px 12px rgba(37,51,80,0.15);
 }
-.thumb-extra {
-  font-size: 11px;
-  color: #7BA190;
-  margin-left: 4px;
+.fab-primary {
+  background: #B87355;
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(184,115,85,0.40);
 }
+
+/* List */
+.list-wrap { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+.card {
+  background: #FFFFFF; border-radius: 18px; padding: 16px 18px;
+  box-shadow: 0 2px 10px rgba(37,51,80,0.07);
+  display: flex; align-items: center; gap: 12px; cursor: pointer;
+}
+.card:active { box-shadow: 0 1px 4px rgba(37,51,80,0.05); }
+.card-main { flex: 1; min-width: 0; }
+.card-date { font-size: 10px; color: #B87355; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; margin: 0 0 5px; }
+.card-text { font-size: 15px; color: #1A2640; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-thumbs { display: flex; align-items: center; flex-shrink: 0; }
+.card-thumb { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; border: 2px solid #FFFFFF; }
+.thumb-more { font-size: 11px; color: #7A8699; margin-left: 5px; }
+
 /* Notes */
-.note-title {
+.note-title { font-size: 15px; color: #1A2640; font-weight: 500; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note-preview { font-size: 13px; color: #7A8699; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note-date { font-size: 11px; color: #B0B8C8; flex-shrink: 0; margin: 0; }
+
+/* Calendar */
+.calendar-wrap { padding: 12px 16px; }
+.cal-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 20px 16px;
+  box-shadow: 0 2px 10px rgba(37,51,80,0.07);
+}
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.cal-month-label {
   font-size: 15px;
-  color: #F0EAD6;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 600;
+  color: #1A2640;
+  letter-spacing: 0.2px;
 }
-.note-preview {
-  font-size: 13px;
-  color: #7BA190;
-  margin-top: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.cal-nav {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #253350;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 8px;
+  line-height: 1;
 }
-.note-date {
+.cal-nav:active { background: rgba(37,51,80,0.08); }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px 2px;
+}
+.cal-dow {
+  text-align: center;
   font-size: 11px;
-  color: #4A6A5A;
-  white-space: nowrap;
-  flex-shrink: 0;
+  font-weight: 600;
+  color: #B0B8C8;
+  letter-spacing: 0.3px;
+  padding-bottom: 8px;
 }
-/* Empty state */
-.empty-state {
-  text-align: center;
-  margin-top: 100px;
-  padding: 0 32px;
+.cal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 2px 4px;
+  border-radius: 10px;
+  min-height: 44px;
+  cursor: default;
 }
-.empty-icon {
-  font-size: 28px;
-  color: #C9A55A;
-  margin-bottom: 12px;
-  opacity: 0.6;
+.cal-empty { cursor: default; }
+.cal-cell.has-entry { cursor: pointer; }
+.cal-cell.has-entry:active { background: rgba(184,115,85,0.08); }
+.cal-cell.is-today .cal-num {
+  background: #253350;
+  color: #FFFFFF !important;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.empty-title {
-  font-size: 16px;
-  color: #F0EAD6;
-  margin: 0 0 4px;
-  font-weight: 500;
-}
-.empty-sub {
+.cal-num {
   font-size: 14px;
-  color: #7BA190;
-  margin: 0;
+  color: #1A2640;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.loading-state {
-  text-align: center;
-  margin-top: 80px;
+.cal-cell.has-entry .cal-num { font-weight: 600; color: #253350; }
+.cal-dots {
+  display: flex;
+  gap: 3px;
+  margin-top: 3px;
 }
-ion-fab-button {
-  --background: #C9A55A;
-  --background-activated: #B8945A;
-  --color: #162E24;
-  --border-radius: 16px;
-  --box-shadow: 0 4px 16px rgba(201, 165, 90, 0.35);
+.cal-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #B87355;
+  display: block;
 }
+
+/* Empty / loading */
+.empty-state { text-align: center; padding: 100px 32px 0; }
+.empty-logo { width: 72px; height: 72px; object-fit: contain; opacity: 0.6; margin-bottom: 16px; }
+.empty-title { font-size: 16px; color: #253350; font-weight: 500; margin: 0 0 4px; }
+.empty-sub { font-size: 14px; color: #7A8699; margin: 0; }
+.loading-state { text-align: center; padding-top: 80px; }
+
 </style>

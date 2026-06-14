@@ -51,8 +51,8 @@ export const entriesService = {
     return res.data
   },
 
-  async update(id: string, text: string, imageUrls: string[] = []) {
-    const res = await api.put(`/entries/${id}`, { text, imageUrls })
+  async update(id: string, text: string, imageUrls: string[] = [], date?: string) {
+    const res = await api.put(`/entries/${id}`, { text, imageUrls, date })
     return res.data
   },
 

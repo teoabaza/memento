@@ -4,30 +4,8 @@
       <div class="login-container">
 
         <div class="login-header">
-          <!-- Pen-nib logo matching the new brand mark -->
           <div class="logo-wrap">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="logo-svg">
-              <rect width="100" height="100" rx="24" fill="#1C3B2D"/>
-              <!-- Pen barrel -->
-              <rect x="43" y="10" width="14" height="20" rx="4"
-                    fill="none" stroke="#C9A55A" stroke-width="2.5"/>
-              <!-- Clip / cap line -->
-              <line x1="50" y1="10" x2="50" y2="30"
-                    stroke="#C9A55A" stroke-width="1.5" stroke-dasharray="2 2"/>
-              <!-- Nib body -->
-              <path d="M37 30 L50 72 L63 30 Z"
-                    fill="none" stroke="#C9A55A" stroke-width="2.5" stroke-linejoin="round"/>
-              <!-- Nib centre line -->
-              <line x1="50" y1="30" x2="50" y2="72"
-                    stroke="#C9A55A" stroke-width="1.2" stroke-dasharray="0"/>
-              <!-- Ink hole -->
-              <circle cx="50" cy="58" r="3.5"
-                      fill="none" stroke="#C9A55A" stroke-width="2"/>
-              <!-- Signature stroke -->
-              <path d="M32 84 Q41 79 50 82 Q59 85 68 80"
-                    fill="none" stroke="#C9A55A" stroke-width="2.5"
-                    stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img src="/logo.png" alt="Memento" class="logo-img" />
           </div>
           <h1>Memento</h1>
           <p>one line a day</p>
@@ -39,15 +17,14 @@
         </ion-segment>
 
         <div class="form-fields">
-          <ion-item class="field-item">
-            <ion-label position="floating">Email</ion-label>
-            <ion-input v-model="email" type="email" autocomplete="email" />
-          </ion-item>
-
-          <ion-item class="field-item">
-            <ion-label position="floating">Password</ion-label>
-            <ion-input v-model="password" type="password" autocomplete="current-password" />
-          </ion-item>
+          <div class="field-wrap">
+            <label class="field-label">Email</label>
+            <ion-input v-model="email" type="email" autocomplete="email" class="field-input" />
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Password</label>
+            <ion-input v-model="password" type="password" autocomplete="current-password" class="field-input" />
+          </div>
         </div>
 
         <ion-button expand="block" class="submit-btn" @click="submit" :disabled="loading">
@@ -64,7 +41,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  IonPage, IonContent, IonItem, IonLabel, IonInput,
+  IonPage, IonContent, IonInput,
   IonButton, IonSegment, IonSegmentButton
 } from '@ionic/vue'
 import { authService } from '../services/api'
@@ -96,97 +73,111 @@ async function submit() {
 
 <style scoped>
 .login-content {
-  --background: #162E24;
+  --background: #f7f1e8;
 }
 .login-container {
-  max-width: 400px;
+  max-width: 380px;
   margin: 0 auto;
-  padding: 60px 24px 40px;
+  padding: 72px 28px 48px;
 }
+
+/* Header */
 .login-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 44px;
 }
 .logo-wrap {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: -10px;
 }
-.logo-svg {
-  width: 72px;
-  height: 72px;
-  border-radius: 20px;
-  filter: drop-shadow(0 4px 16px rgba(201, 165, 90, 0.25));
+.logo-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
 }
 .login-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: #F0EAD6;
-  letter-spacing: -0.5px;
-  margin: 0;
+  font-size: 30px;
+  font-weight: 300;
+  color: #253350;
+  letter-spacing: 2px;
+  margin: 0 0 4px;
+  font-family: Georgia, 'Times New Roman', serif;
 }
 .login-header p {
-  color: #7BA190;
-  margin-top: 4px;
-  font-size: 14px;
-  letter-spacing: 0.3px;
+  color: #7A8699;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  margin: 0;
 }
+
+/* Segment */
 .mode-segment {
-  --background: #1C3B2D;
-  border-radius: 14px;
-  margin-bottom: 24px;
-  border: 0.5px solid #2A4A3A;
+  --background: #EDE5DA;
+  border-radius: 12px;
+  margin-bottom: 28px;
+  overflow: hidden;
 }
 ion-segment-button {
-  --color: #7BA190;
-  --color-checked: #F0EAD6;
-  --indicator-color: #C9A55A;
-  --border-radius: 12px;
-  --padding-top: 10px;
-  --padding-bottom: 10px;
+  --color: #7A8699;
+  --color-checked: #253350;
+  --indicator-color: #FFFFFF;
+  --border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
 }
+
+/* Form */
 .form-fields {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 14px;
+  margin-bottom: 22px;
 }
-.field-item {
-  --background: #1C3B2D;
-  --border-radius: 14px;
-  --border-color: #2A4A3A;
-  --padding-start: 16px;
-  --color: #F0EAD6;
-  border-radius: 14px;
-  border: 0.5px solid #2A4A3A;
+.field-wrap {
+  background: #FFFFFF;
+  border-radius: 10px;
+  border: 1px solid #E4DAD0;
+  padding: 10px 16px 12px;
+  box-shadow: 0 1px 4px rgba(37,51,80,0.05);
 }
-ion-label {
-  color: #7BA190 !important;
-  font-size: 11px !important;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-ion-input {
-  --color: #F0EAD6;
-  --placeholder-color: #4A6A5A;
-}
-.submit-btn {
-  --background: #C9A55A;
-  --background-hover: #D8B870;
-  --color: #162E24;
-  --border-radius: 14px;
-  --padding-top: 16px;
-  --padding-bottom: 16px;
-  font-size: 16px;
+.field-label {
+  display: block;
+  font-size: 10px;
   font-weight: 600;
-  margin-top: 4px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #7A8699;
+  margin-bottom: 4px;
+}
+.field-input {
+  --color: #1A2640;
+  --placeholder-color: #C0C8D8;
+  --padding-start: 0;
+  --padding-end: 0;
+  font-size: 16px;
+}
+
+/* Submit */
+.submit-btn {
+  --background: #253350;
+  --background-hover: #3A4F72;
+  --background-activated: #1C2A45;
+  --color: #FFFFFF;
+  --border-radius: 10px;
+  --padding-top: 17px;
+  --padding-bottom: 17px;
+  --box-shadow: 0 4px 14px rgba(37,51,80,0.25);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 .error {
-  color: #E05C5C;
+  color: #C0504A;
   text-align: center;
-  margin-top: 14px;
+  margin-top: 16px;
   font-size: 14px;
 }
 </style>
